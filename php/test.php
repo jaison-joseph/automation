@@ -10,29 +10,34 @@
 		<?php
 			
 			// variables for form fields
-			$userID = "";
-			$listID = "";
+			$num = "";
+			$date = "";
 			
 			// variables to enforce reuqired fields
-			$userID_re = "*";
+			$num_re = "*";
+			$date_re = "*";
 			
 			$flag = FALSE;	// flag that's set to TRUE if any of the required fields are not filled
 			
 			if (isset($_POST['enter'])) {
-				if (isset($_POST['userID'])) {
-					$userID = trim($_POST['userID']);
+				if (isset($_POST['num'])) {
+					$num = trim($_POST['num']);
 				}
-				if ($userID == "") {
+				if ($num == "") {
 					$flag = TRUE;
-					$userID_re = '<span style="color:red">*</span>';
+					$num_re = '<span style="color:red">*</span>';
 				}
 				
-				if (isset($_POST['listID'])) {
-					$listID = trim($_POST['listID']);
+				if (isset($_POST['date'])) {
+					$date = trim($_POST['date']);
+				}
+				if ($date == "") {
+					$flag = TRUE;
+					$date_re = '<span style="color:red">*</span>';
 				}
 				
 				if (!$flag) {
-					Header ("Location:output.php?userID=".$userID."&listID=".$listID);
+					Header ("Location:output.php?num=".$num."&date=".$date);
 				}
 			}
 		?>
@@ -43,13 +48,12 @@
 			</div>
 			<div class = "mainContainer">
 				<div class = "question">
-				Enter UserID: <?php print $userID_re; ?>
-				<input type="text" maxlength = "50" value="<?php print $userID; ?>" name="userID" />
+				Number: <?php print $num_re; ?>
+				<input type="number" value="<?php print $num; ?>" name="num" />
 				</div>
 				<div class = "question">
-					Enter listID: 
-				<input type = "radio" name = "listID" value = "male" <?php if ($listID=="male") echo "checked";?> >male
-				<input type = "radio" name = "listID" value = "female" <?php if ($listID=="female") echo "checked";?> >female
+				Date: <?php print $date_re; ?>
+				<input type="date" name="date" + value=<?php print $date?>>
 				</div>
 				<div class = "submitButton">
 					<input name="enter" class="btn" type="submit" value="Submit" style="height: 30px; width: 60px; font-family: helvetica;"/> 

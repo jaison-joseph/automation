@@ -8,8 +8,8 @@
 	<body>
 		
 		<?php
-			$userID =  $_GET['userID'];
-			$listID =  $_GET['listID'];
+			$num =  $_GET['num'];
+			$date =  $_GET['date'];
 			?>
 		
 		<div class="title">
@@ -17,10 +17,10 @@
 		</div>
 		<div class = "mainContainer">
 			<div class="answer">
-				userID: <?php print $userID?>
+				num: <?php print $num?>
 			</div>
 			<div class="answer">
-				listID: <?php print $listID?>
+				date: <?php print $date?>
 			</div>
 		</div>
 	</body>

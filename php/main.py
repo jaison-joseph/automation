@@ -1,10 +1,3 @@
-
-
-from pickle import FALSE
-
-from soupsieve import select
-
-
 start_string_ = \
 '''
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -26,7 +19,7 @@ class Item:
     def __init__(self, qn: str, required: bool, inputType: str, varName: str, inputTypeOptions = None) -> None:
         self.qn = qn
         self.required = required
-        if inputType not in ['text', 'radio', 'select', 'checkbox']:
+        if inputType not in ['text', 'radio', 'select', 'checkbox', 'date', 'number']:
             print("question type " + inputType + " is invalid")
             return
         self.inputType = inputType
@@ -125,6 +118,11 @@ class List:
             foo.append('</select>')
         elif qn.inputType == 'checkbox':
             foo.append('<input type="checkbox" name="' + qn.varName + '" value=<?php print $' + qn.varName + ' ?> <?php if ($' + qn.varName + ') echo "checked"; ?>>')
+        elif qn.inputType == 'date':
+            foo.append('<input type="date" name="' + qn.varName + '" + value=<?php print $' + qn.varName + '?>>')
+        elif qn.inputType == 'number':
+            foo.append('<input type="number" value="<?php print $' + qn.varName + '; ?>" name="' + qn.varName + '" />')
+
         else:
             print("invalid question type found: ", qn)
         result += foo
@@ -242,7 +240,10 @@ class List:
 questions are suffixed with a ': ' automatically
 '''
 
-a = Item('Enter UserID', True, 'text', 'userID')
-b = Item('Enter listID', False, 'radio', 'listID', ['male', 'female'])
+if __name__ == "__main__":
+    # a = Item('Enter UserID', True, 'text', 'userID')
+    # b = Item('Enter listID', False, 'radio', 'listID', ['male', 'female'])
+    a = Item("Number", True, 'number', 'num')
+    b = Item("Date", True, 'date', 'date')
 
-form = List('test', 'test.php', 'output.php', [], [a, b])
+    form = List('test', 'test.php', 'output.php', [], [a, b])
