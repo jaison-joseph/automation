@@ -16,10 +16,10 @@ end_string_ = \
 </html>'''
 
 class Item:
-    def __init__(self, qn: str, required: bool, inputType: str, varName: str, inputTypeOptions = None) -> None:
+    def __init__(self, qn: str, required: bool, inputType: str, varName: str, inputTypeOptions = None, fkArgs = None) -> None:
         self.qn = qn
         self.required = required
-        if inputType not in ['text', 'radio', 'select', 'checkbox', 'date', 'number']:
+        if inputType not in ['text', 'radio', 'select', 'checkbox', 'date', 'number', 'fkSelect']:
             print("question type " + inputType + " is invalid")
             return
         self.inputType = inputType
@@ -29,24 +29,33 @@ class Item:
                 print("for question types of radio or select, strings for options must be provided")
                 return
             self.inputTypeOptions = inputTypeOptions[:]
+        if inputType == 'fkSelect':
+            if fkArgs is None:
+                print("for fkSelect type, you are requied to pass in an array of arguments for the custom select function")
+                return
+            self.fkArgs = fkArgs[:]
 
 class List:
-    def __init__(self, title: str, fileName: str, resultFileName: str, requiredFiles: list, items: list) -> None:
+    def __init__(self, title: str, fileName: str, resultFileName: str, requiredFiles: list, items: list, tableName: str, makeOutputPage = False, tableFieldCount = -1) -> None:
         self.title = title
         self.fileName = fileName
         self.resultFileName = resultFileName
+        self.makeOutputPage = makeOutputPage        # we might not always need to create output pages
+        self.tableName = tableName                  # the table for which we are going to insert the records
+        self.tableFieldCount = tableFieldCount      # the table's # of columns
         self.requiredFiles = requiredFiles[:]
         self.items = items[:]
         self.genPHP()
         self.genHTML()
-        self.genResultsHTML()
+        if self.makeOutputPage:
+            self.genResultsHTML()
         self.writeFiles()
 
     def genPHP(self):
         self.php = []
         
         for i in self.requiredFiles:
-            self.php.append('require_once(' + i + ');')
+            self.php.append('require_once("' + i + '");')
 
         self.php.append('')
 
@@ -84,13 +93,42 @@ class List:
 
             self.php.append("")
 
-        self.php.append('if (!$flag) {')
-        # Header ("Location: process.php ? firstName =".$ fn ."&lastName=".$ln."&email=".$em."&gender=".$gender."&dept=".$dept."&st=".$st);
-        nextPageURL = self.resultFileName + '?' + self.items[0].varName + '=".$' + self.items[0].varName
-        for i in self.items[1:]:
-            nextPageURL += '."&' + i.varName + '=".$' + i.varName
+        '''
+        if ($agreeok) {
+            //enter data into the database
+            
+            $stmt = $con->prepare("insert into EMPLOYEE values(null, ?, ?, ?, ?)");
+            if ($stmt->execute(array($fn, $ln, $gender, $deptID ))==TRUE)
+                $msg = '<font color = "red">Thank you for registering. Please login.</font><br/>';
+            else
+                $msg = "Your information cannot be entered this time. Please try again later.";
+        }            
+        '''
+        if self.makeOutputPage is False:
+            self.php.append('//enter data into the database')
+            self.php.append('$stmt = $con->prepare("insert into ' + self.tableName + ' values(null' + (', ?'*(self.tableFieldCount-1)) + ')");')
+            foo = 'if ($stmt->execute(array('
+            foo += '$' + self.items[0].varName
+            for item in self.items[1:]:
+                foo += ', $' + item.varName
+            foo += '))==FALSE) {'
+            self.php.append(foo)
+            self.php.append('$flag = TRUE;')
+            self.php.append('''echo "<script type='text/javascript'>''')
+            self.php.append('''alert('Failed to insert entries into table. Please try again later or contact the sysadmin');''')
+            self.php.append('''</script>"; ''')
+            self.php.append("}")
 
-        self.php.append('Header ("Location:' + nextPageURL + ");")			
+        if self.makeOutputPage:
+            # Header ("Location: process.php ? firstName =".$ fn ."&lastName=".$ln."&email=".$em."&gender=".$gender."&dept=".$dept."&st=".$st);
+            nextPageURL = self.resultFileName + '?' + self.items[0].varName + '=".$' + self.items[0].varName
+            for i in self.items[1:]:
+                nextPageURL += '."&' + i.varName + '=".$' + i.varName
+        else:
+            nextPageURL = self.resultFileName + "?tableName=" + self.tableName
+        
+        self.php.append('if (!$flag) {')
+        self.php.append('Header ("Location:' + nextPageURL + '");')			
         self.php.append('}') # for the if flag
         self.php.append('}') # for the isset
 
@@ -122,6 +160,16 @@ class List:
             foo.append('<input type="date" name="' + qn.varName + '" + value=<?php print $' + qn.varName + '?>>')
         elif qn.inputType == 'number':
             foo.append('<input type="number" value="<?php print $' + qn.varName + '; ?>" name="' + qn.varName + '" />')
+        elif qn.inputType == 'fkSelect':
+            # <?php makeDropdown('country_name', 'COUNTRY', 'CountryID', 'CountryName');?>
+            foo.append(
+                "<?php makeDropdown("\
+                +\
+                "'" + qn.fkArgs[0] + "'" +\
+                ''.join([", '" + i +"'" for i in qn.fkArgs[1:]]) +\
+                ", '" + qn.varName + "'" +\
+                ");?>"
+            )
 
         else:
             print("invalid question type found: ", qn)
@@ -166,6 +214,8 @@ class List:
         self.html.append('</html>')
 
     def genResultsHTML(self):
+        if self.makeOutputPage is False:
+            return
         self.results_html = []
 
         self.results_html.append('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">')
@@ -217,6 +267,9 @@ class List:
                 if '</html' in i or '</body' in i or '</form' in i or '</select' in i or '</div' in i or '}' in i or '?>' in i:
                     tabCount -= 1
 
+        # if we were not asked to create output HTML pages, then we are done
+        if self.makeOutputPage is False:
+            return
         tabCount = 0
         print("number of lines: ", len(self.results_html))
         with open(self.resultFileName, "w+") as f:
