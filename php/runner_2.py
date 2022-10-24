@@ -19,13 +19,14 @@ input types: ['text', 'radio', 'select', 'checkbox']
 '''
 
 from main import Item, List
+# <?php makeDropdown('country_name', 'COUNTRY', 'CountryID', 'CountryName');?>
 
 adminItems = [
-    Item('New admin username', True, 'text', 'newAdminUsername')
+    Item('New admin username', True, 'fkSelect', 'newAdminUsername', None, ['USER', 'UserID', 'Username'])
 ]
 
 productItems = [
-    Item('Product category', True, 'select', 'category', ['', 'Food', 'Electronics', 'Household']),
+    Item('Product category', True, 'fkSelect', 'category', None, ['PRODUCT_CATEGORY', 'ProductCategoryID', 'CategoryName']),
     Item("Product name", True, 'text', 'name'),
     Item("Product price", True, 'number', 'price'),
     Item("Product description", False, 'text', 'description'),
@@ -37,8 +38,8 @@ categoryItems = [
 ]
 
 inventoryItems = [
-    Item('Product ID', True, 'select', 'productID', ['', '123', '456', '789']),
-    Item('Seller ID', True, 'select', 'sellerID', ['', 'abc', 'def', 'ghi']),
+    Item('Product ID', True, 'fkSelect', 'productID', None, ['PRODUCT', 'ProductID', 'Name']),
+    Item('Seller ID', True, 'fkSelect', 'sellerID', None, ['SELLER', 'SellerID', 'Name']),
     Item('Date stocked', True, 'date', 'dateStocked'),
     Item('Quantity remaining', True, 'number', 'qtyRemaining')
 ]
@@ -46,10 +47,13 @@ inventoryItems = [
 sellerItems = [
     Item('Seller name', True, 'text', 'name'),
     Item('Email', True, 'text', 'email'),
-    Item('Phone number', True, 'number', 'phoneNumber'),
-    Item('Address', True, 'text', 'address'),
-    Item('Username', True, 'text', 'username'),
-    Item('Password', True, 'text', 'password')
+    Item('LineOne', True, 'text', 'lineOne'),
+    Item('LineTwo', True, 'text', 'lineTwo'),
+    Item('City', True, 'text', 'city'),
+    Item('State', True, 'text', 'state'),
+    Item('Zip', True, 'number', 'zip'),
+    Item('POBox', True, 'number', 'pobox'),
+    Item('Country', True, 'fkSelect', 'country', None, ['COUNTRY', 'CountryID', 'CountryName'])
 ]
 
 userItems = [
@@ -60,8 +64,14 @@ userItems = [
     Item("Last Name", True, 'text', 'lastName'),
     Item("Age", True, 'number', 'age'),
     Item('Gender', True, 'radio', 'gender', ['male', 'female', 'other']),
-    Item('Address', True, 'text', 'address'),
-    Item('Account Type', True, 'radio', 'accType', ['Admin', 'Customer', 'Seller'])
+    Item('LineOne', True, 'text', 'lineOne'),
+    Item('LineTwo', True, 'text', 'lineTwo'),
+    Item('City', True, 'text', 'city'),
+    Item('State', True, 'text', 'state'),
+    Item('Zip', True, 'number', 'zip'),
+    Item('POBox', True, 'number', 'pobox'),
+    Item('Country', True, 'fkSelect', 'country', None, ['COUNTRY', 'CountryID', 'CountryName']),
+    Item('Account Type', True, 'fkSelect', 'accType', None, ['ACCOUNT_TYPE', 'AccTypeID', 'TypeName'])
 ]
 
 countryItems = [
