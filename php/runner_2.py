@@ -78,10 +78,10 @@ countryItems = [
     Item("Country name", True, 'text', 'countryName')
 ]
 
-newAdminForm = List('Add admin', 'newAdminInput.php', 'table.php', ['dbconnect.php', 'util.php'], adminItems, 'ADMIN', False, 2)
-productForm = List('New product', 'newProductInput.php', 'table.php', ['dbconnect.php', 'util.php'], productItems, 'PRODUCT', False, 5)
-categoryForm = List('New category', 'newCategoryInput.php', 'table.php', ['dbconnect.php', 'util.php'], categoryItems, 'PRODUCT_CATEGORY', False, 3)
-inventoryForm = List('New inventory', 'newInventoryInput.php', 'table.php', ['dbconnect.php', 'util.php'], inventoryItems, 'INVENTORY', False, 6)
-sellerForm = List('New seller', 'newSellerInput.php', 'table.php', ['dbconnect.php', 'util.php'], sellerItems,'SELLER', False, 4)
-userItems = List('New User', 'newUserInput.php', 'table.php', ['dbconnect.php', 'util.php'], userItems, 'USER', 10)
-userItems = List('New Country', 'newCountryInput.php', 'table.php', ['dbconnect.php', 'util.php'], countryItems, 'COUNTRY', False, 2)
+newAdminForm = List('Add admin', 'newAdminInput.php', 'table.php', ['dbconnect.php', 'alsoutil.php'], adminItems, 'ADMIN', False, 2)
+productForm = List('New product', 'newProductInput.php', 'table.php', ['dbconnect.php', 'alsoutil.php'], productItems, 'PRODUCT', False, 5)
+categoryForm = List('New category', 'newCategoryInput.php', 'table.php', ['dbconnect.php', 'alsoutil.php'], categoryItems, 'PRODUCT_CATEGORY', False, 3)
+inventoryForm = List('New inventory', 'newInventoryInput.php', 'table.php', ['dbconnect.php', 'alsoutil.php'], inventoryItems, 'INVENTORY', False, 6)
+sellerForm = List('New seller', 'newSellerInput.php', 'table.php', ['dbconnect.php', 'alsoutil.php'], sellerItems,'SELLER', False, 4)
+userForm = List('New User', 'newUserInput.php', 'table.php', ['dbconnect.php', 'alsoutil.php'], userItems, 'USER', False, 10)
+countryForm = List('New Country', 'newCountryInput.php', 'table.php', ['dbconnect.php', 'alsoutil.php'], countryItems, 'COUNTRY', False, 2)

@@ -121,14 +121,15 @@ class List:
 
         if self.makeOutputPage:
             # Header ("Location: process.php ? firstName =".$ fn ."&lastName=".$ln."&email=".$em."&gender=".$gender."&dept=".$dept."&st=".$st);
+            # Header ("Location: process.php ? firstName =".$ fn ."&lastName=".$ln."&email=".$em."&gender=".$gender."&dept=".$dept."&st=".$st);
             nextPageURL = self.resultFileName + '?' + self.items[0].varName + '=".$' + self.items[0].varName
             for i in self.items[1:]:
                 nextPageURL += '."&' + i.varName + '=".$' + i.varName
         else:
-            nextPageURL = self.resultFileName + "?tableName=" + self.tableName
+            nextPageURL = self.resultFileName + "?tableName=" + self.tableName + '"'
         
         self.php.append('if (!$flag) {')
-        self.php.append('Header ("Location:' + nextPageURL + '");')			
+        self.php.append('Header ("Location:' + nextPageURL + ');')			
         self.php.append('}') # for the if flag
         self.php.append('}') # for the isset
 
@@ -161,13 +162,13 @@ class List:
         elif qn.inputType == 'number':
             foo.append('<input type="number" value="<?php print $' + qn.varName + '; ?>" name="' + qn.varName + '" />')
         elif qn.inputType == 'fkSelect':
+            #       makeDropdown($selectName, $tableName, $columnIDName, $columnDataName);
             # <?php makeDropdown('country_name', 'COUNTRY', 'CountryID', 'CountryName');?>
             foo.append(
                 "<?php makeDropdown("\
                 +\
-                "'" + qn.fkArgs[0] + "'" +\
-                ''.join([", '" + i +"'" for i in qn.fkArgs[1:]]) +\
-                ", '" + qn.varName + "'" +\
+                "'" + qn.varName + "'" +\
+                ''.join([", '" + i +"'" for i in qn.fkArgs]) +\
                 ");?>"
             )
 
